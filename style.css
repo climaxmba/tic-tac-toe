@@ -10,7 +10,7 @@ body {
 
 /* nav-bar */
 #nav-bar {
-    background-color: lightsalmon;
+    background-color: #00000010;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -87,3 +87,39 @@ body {
     grid-column: 1 / -1;
 }
 /* End game-start */
+/* game-main */
+#game-main.active {
+    margin-top: 5em;
+    padding: 16px;
+    height: 50%;
+    display: grid;
+    gap: 8px;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+#game-main.active span {
+    text-align: center;
+}
+/* End game-main */
+/* game-over */
+#game-over.active {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+#game-over.active p {
+    text-align: center;
+    font-size: 1.25rem;
+}
+#game-over.active button {
+    padding: 8px;
+}
+/* End game-over */
+/* End main */
+
+/* footer */
+footer {
+    text-align: center;
+    background-color: #00000010;
+    padding: 20px;
+}
+/* End footer */
