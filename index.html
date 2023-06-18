@@ -8,6 +8,55 @@
     <title>Tic Tac Toe</title>
 </head>
 <body>
+    <div id="nav-bar">
+        <h1>Tic Tac Toe</h1>
+        <button>Dark theme</button>
+    </div>
+
+    <div id="main">
+        <div class="page active" id="game-start">
+            <p>Note: X gets the first round</p>
+
+            <div>
+                <div>
+                    <p>Player 1</p>
+            
+                    <label for="name1">Name:</label>
+                    <input type="text" placeholder="Player1" id="name1">
+            
+                    <label>Choose X/O:</label>
+                    <button>X</button><button>O</button>
+            
+                    <button>Submit</button>
+                </div>
+                <div>
+                    <p>Player 2</p>
+            
+                    <label for="name2">Name:</label>
+                    <input type="text" placeholder="Player1" id="name2">
+            
+                    <label>Choose type:</label>
+                    <button>Human</button><button>Computer</button>
+            
+                    <button>Submit</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="page" id="game-main">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+        </div>
+
+        <div class="page" id="game-over">
+            <p></p>
+            <button>Reload</button>
+        </div>
+    </div>
+
+    <footer>Copyright &copy; 2023 climaxmba</footer>
     <script src="script.js"></script>
 </body>
 </html>

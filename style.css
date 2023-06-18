@@ -1,0 +1,89 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto minmax(500px, 130vh) auto;
+}
+
+/* nav-bar */
+#nav-bar {
+    background-color: lightsalmon;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#nav-bar h1 {
+    margin: 8px 0;
+    margin-left: 16px;
+}
+#nav-bar button {
+    margin-right: 16px;
+}
+/* End nav-bar */
+
+/* main */
+#main {
+    display: flex;
+    flex-direction: column;
+}
+#main .page:not(.active) {
+    display: none;
+}
+/* game-start */
+#game-start.active {
+    display: grid;
+    gap: 8px 16px;
+    grid-template-rows: auto auto;
+}
+#game-start.active > p {
+    text-align: center;
+    font-size: 1.25rem;
+    font-style: italic;
+}
+#game-start.active > div {
+    margin: 0 12%;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+#game-start.active > div > div {
+    padding: 16px;
+    border: 1px solid black;
+    display: grid;
+    gap: 12px 8px;
+    grid-template: repeat(6, auto) / repeat(2, 1fr);
+}
+#game-start.active > div p:first-child {
+    grid-column: 1 / -1;
+    font-size: 1.25em;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+}
+#game-start.active > div label {
+    font-size: 1.1em;
+    grid-column: 1 / -1;
+    letter-spacing: 1px;
+}
+#game-start.active > div input {
+    border: none;
+    border-bottom: 1px solid black;
+    padding: 8px;
+    grid-column: 1 / -1;
+    letter-spacing: 1px;
+}
+#game-start.active > div input:active,
+#game-start.active > div input:focus {
+    background-color: #00000010;
+    outline: none;
+}
+#game-start.active > div button {
+    padding: 8px;
+}
+#game-start.active > div button:last-child {
+    grid-column: 1 / -1;
+}
+/* End game-start */
