@@ -17,30 +17,36 @@
         <div class="page active" id="game-start">
             <p>Note: X gets the first round</p>
 
-            <div>
+            <form>
                 <div>
                     <p>Player 1</p>
             
                     <label for="name1">Name:</label>
-                    <input type="text" placeholder="Player1" id="name1">
-            
-                    <label>Choose X/O:</label>
-                    <button>X</button><button>O</button>
-            
-                    <button>Submit</button>
+                    <input type="text" placeholder="Player1" id="name1" name="name1">
+
+                    <div class="optns">
+                        <input type="radio" name="X/O" id="x" value="x"><label for="x" class="optns">X</label>
+                    </div>
+                    <div class="optns">
+                        <input type="radio" name="X/O" id="o" value="o"><label for="o" class="optns">O</label>
+                    </div>
                 </div>
                 <div>
                     <p>Player 2</p>
-            
+
                     <label for="name2">Name:</label>
-                    <input type="text" placeholder="Player1" id="name2">
-            
-                    <label>Choose type:</label>
-                    <button>Human</button><button>Computer</button>
-            
-                    <button>Submit</button>
+                    <input type="text" placeholder="Player1" id="name2" name="name2">
+
+                    <div class="optns">
+                        <input type="radio" name="type" id="computer" value="computer"><label for="computer" class="optns">Computer</label>
+                    </div>
+                    <div class="optns">
+                        <input type="radio" name="type" id="human" value="human"><label for="human" class="optns">Human</label>
+                    </div>
                 </div>
-            </div>
+            </form>
+
+            <button id="submit-btn">Submit</button>
         </div>
 
         <div class="page" id="game-main">

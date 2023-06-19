@@ -36,55 +36,57 @@ body {
 #game-start.active {
     display: grid;
     gap: 8px 16px;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
 }
 #game-start.active > p {
     text-align: center;
     font-size: 1.25rem;
     font-style: italic;
 }
-#game-start.active > div {
+#game-start.active > form {
     margin: 0 12%;
     display: grid;
     gap: 12px;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
-#game-start.active > div > div {
+#game-start.active > form > div {
     padding: 16px;
     border: 1px solid black;
     display: grid;
     gap: 12px 8px;
-    grid-template: repeat(6, auto) / repeat(2, 1fr);
+    grid-template-rows: repeat(5, auto);
 }
-#game-start.active > div p:first-child {
-    grid-column: 1 / -1;
+#game-start.active > form p:first-child {
     font-size: 1.25em;
     font-weight: bold;
     text-align: center;
     margin: 0;
 }
-#game-start.active > div label {
+#game-start.active > form label {
     font-size: 1.1em;
-    grid-column: 1 / -1;
     letter-spacing: 1px;
 }
-#game-start.active > div input {
+#game-start.active > form input[type="text"] {
     border: none;
     border-bottom: 1px solid black;
     padding: 8px;
-    grid-column: 1 / -1;
     letter-spacing: 1px;
 }
-#game-start.active > div input:active,
-#game-start.active > div input:focus {
+#game-start.active > form input[type="text"]:active,
+#game-start.active > form input[type="text"]:focus {
     background-color: #00000010;
     outline: none;
 }
-#game-start.active > div button {
-    padding: 8px;
+#game-start.active .optns {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: auto 1fr;
+    justify-content: start;
+    align-items: center;
 }
-#game-start.active > div button:last-child {
-    grid-column: 1 / -1;
+#submit-btn {
+    padding: 6px 18px;
+    justify-self: center;
 }
 /* End game-start */
 /* game-main */
