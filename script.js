@@ -7,25 +7,39 @@ function Player(name) {
 }
 
 const GameBoard = (function() {
-    let gameBoard = [null, null, null, null, null, null, null, null, null];
-    const getGameBoard = () => gameBoard;
-    const setGameBoard = (index, value) => {
+    let gameBoard = ['', '', '', '', '', '', '', '', ''];
+    const getBoard = () => gameBoard;
+    const setBoard = (index, value) => {
         gameBoard[index] = value;
     };
-    return {setGameBoard, getGameBoard};
+    return {setBoard, getBoard};
 })()
 
 const displayController = (function() {
-    // Select DOM objects
+    let gameStart, gameMain, gameOver, submitBtn, inputs, boardDisplay;
 
-    function updateDisplay() {
-        // GameBoard.getGameBoard()
-
+    function cacheDom() {
+        gameStart = document.getElementById('game-start');
+        gameMain = document.getElementById('game-main');
+        gameOver = document.getElementById('game-over');
+        submitBtn = document.getElementById('submit-btn');
+        inputs = gameStart.querySelectorAll('input');
+        boardDisplay = gameMain.querySelectorAll('span');
     }
-    return {updateDisplay};
+    function updateBoardDisplay() {
+        let board = GameBoard.getBoard();
+        for (let i = 0; i < board.length; i++) {
+            boardDisplay[i].textContent = board[i];
+        }
+    }
+    function bindEvents() {
+        // Add events;
+    }
+    return {updateBoardDisplay, cacheDom, bindEvents};
 })()
 
 function main() {
+    displayController.cacheDom()
     // Display home
     // Bind events
     return;
