@@ -41,7 +41,7 @@ const displayController = (function() {
         })
     }
     function getFormData() {
-        return Array.from(new FormData(gameStart.querySelector('form')));
+        return Object.fromEntries(new FormData(gameStart.querySelector('form')));
     }
     function updateBoardDisplay() {
         let board = GameBoard.getBoard();
@@ -67,21 +67,22 @@ function main() {
         let data = displayController.getFormData();
 
         //Validate data
-        if (data.length !== 4) {
-          isValid = false;
-        } else {
-          data.forEach((arr) => {
-            if (!arr[1]) isValid = false;
-          });
+        if (
+          data["name1"] &&
+          (data["X/O"] === "x" || data["X/O"] === "o") &&
+          data["name2"] &&
+          data["type"]
+        ) {
+          isValid = true;
         }
 
         if (isValid) {
-          player1 = new Player(data[0][1], data[1][1], 1);
+          player1 = new Player(data['name1'], data['X/O'], 1);
           player2 = new Player(
-            data[2][1],
-            data[1][1] === "x" ? "o" : "x",
+            data['name2'],
+            data['X/O'] === "x" ? "o" : "x",
             2,
-            data[3][1] === "computer" ? true : false
+            data['type'] === "computer" ? true : false
           );
         } else {
             alert('Fill in the fields correctly!');
