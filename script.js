@@ -1,9 +1,14 @@
-function Player(name) {
+function Player(name, char, index, isComputer) {
     this.name = name;
-    this.points = 0;
-    const setName = name => this.name = name;
-    const incrementPoints = () => points++;
-    return {setName, incrementPoints};
+    this.char = char;
+    this.isComputer = (isComputer)? true : false;
+    let points = 0;
+    const getName = () => this.name;
+    const incrementPoints = () => {
+        points++;
+        pubSub.publish('playerPointChanged', {index, points});
+    }
+    return {getName, incrementPoints, index};
 }
 
 const GameBoard = (function() {
@@ -26,22 +31,62 @@ const displayController = (function() {
         inputs = gameStart.querySelectorAll('input');
         boardDisplay = gameMain.querySelectorAll('span');
     }
+    function clearForm() {
+        inputs.forEach(elem => {
+            if (elem.type === 'radio') {
+                elem.checked = false;
+            } else {
+                elem.value = '';
+            }
+        })
+    }
+    function getFormData() {
+        return Array.from(new FormData(gameStart.querySelector('form')));
+    }
     function updateBoardDisplay() {
         let board = GameBoard.getBoard();
         for (let i = 0; i < board.length; i++) {
             boardDisplay[i].textContent = board[i];
         }
     }
-    function bindEvents() {
-        // Add events;
-    }
-    return {updateBoardDisplay, cacheDom, bindEvents};
+    return {updateBoardDisplay, cacheDom, clearForm, getFormData};
 })()
 
 function main() {
-    displayController.cacheDom()
-    // Display home
-    // Bind events
+    let player1, player2;
+    displayController.cacheDom();
+    displayController.clearForm();
+
+    bindEvents();
+
+    function bindEvents() {
+        submitBtn.addEventListener('click', savePlayers)
+    }
+    function savePlayers() {
+        let isValid;
+        let data = displayController.getFormData();
+
+        //Validate data
+        if (data.length !== 4) {
+          isValid = false;
+        } else {
+          data.forEach((arr) => {
+            if (!arr[1]) isValid = false;
+          });
+        }
+
+        if (isValid) {
+          player1 = new Player(data[0][1], data[1][1], 1);
+          player2 = new Player(
+            data[2][1],
+            data[1][1] === "x" ? "o" : "x",
+            2,
+            data[3][1] === "computer" ? true : false
+          );
+        } else {
+            alert('Fill in the fields correctly!');
+        }
+    }
     return;
 }
 
