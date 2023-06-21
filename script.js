@@ -1,3 +1,5 @@
+let player1, player2;
+
 function Player(name, char, index, isComputer) {
     this.name = name;
     this.char = char;
@@ -20,77 +22,6 @@ const GameBoard = (function() {
     return {setBoard, getBoard};
 })()
 
-const displayController = (function() {
-    let gameStart, gameMain, gameOver, submitBtn, inputs, boardDisplay;
-
-    function cacheDom() {
-        gameStart = document.getElementById('game-start');
-        gameMain = document.getElementById('game-main');
-        gameOver = document.getElementById('game-over');
-        submitBtn = document.getElementById('submit-btn');
-        inputs = gameStart.querySelectorAll('input');
-        boardDisplay = gameMain.querySelectorAll('span');
-    }
-    function clearForm() {
-        inputs.forEach(elem => {
-            if (elem.type === 'radio') {
-                elem.checked = false;
-            } else {
-                elem.value = '';
-            }
-        })
-    }
-    function getFormData() {
-        return Object.fromEntries(new FormData(gameStart.querySelector('form')));
-    }
-    function updateBoardDisplay() {
-        let board = GameBoard.getBoard();
-        for (let i = 0; i < board.length; i++) {
-            boardDisplay[i].textContent = board[i];
-        }
-    }
-    return {updateBoardDisplay, cacheDom, clearForm, getFormData};
-})()
-
-function main() {
-    let player1, player2;
-    displayController.cacheDom();
-    displayController.clearForm();
-
-    bindEvents();
-
-    function bindEvents() {
-        submitBtn.addEventListener('click', savePlayers)
-    }
-    function savePlayers() {
-        let isValid;
-        let data = displayController.getFormData();
-
-        //Validate data
-        if (
-          data["name1"] &&
-          (data["X/O"] === "x" || data["X/O"] === "o") &&
-          data["name2"] &&
-          data["type"]
-        ) {
-          isValid = true;
-        }
-
-        if (isValid) {
-          player1 = new Player(data['name1'], data['X/O'], 1);
-          player2 = new Player(
-            data['name2'],
-            data['X/O'] === "x" ? "o" : "x",
-            2,
-            data['type'] === "computer" ? true : false
-          );
-        } else {
-            alert('Fill in the fields correctly!');
-        }
-    }
-    return;
-}
-
 const pubSub = (function() {
     let events = {};
 
@@ -108,3 +39,79 @@ const pubSub = (function() {
 
     return {subscribe, unSubscribe, publish};
 })()
+
+const displayController = (function() {
+    let gameStart = document.getElementById("game-start"),
+      gameMain = document.getElementById("game-main"),
+      gameOver = document.getElementById("game-over"),
+      pages = [gameStart, gameMain, gameOver],
+      submitBtn = document.getElementById("submit-btn"),
+      inputs = gameStart.querySelectorAll("input"),
+      boardDisplay = gameMain.querySelectorAll("span");
+
+    pubSub.subscribe("playersFormSubmitted", changeToGameMain);
+
+    function clearForm() {
+        inputs.forEach(elem => {
+            if (elem.type === 'radio') {
+                elem.checked = false;
+            } else {
+                elem.value = '';
+            }
+        })
+    }
+    function bindEvents() {
+        submitBtn.onclick = submit;
+    }
+    function getFormData() {
+        return Object.fromEntries(new FormData(gameStart.querySelector('form')));
+    }
+    function updateBoardDisplay() {
+        let board = GameBoard.getBoard();
+        for (let i = 0; i < board.length; i++) {
+            boardDisplay[i].textContent = board[i];
+        }
+    }
+    function changeToGameMain() {
+        clearForm();
+        pages.forEach(page => {
+            if (page.classList.contains('active')) {
+                page.classList.remove('active');
+            }
+        })
+        gameMain.classList.add('active');
+    }
+    return {updateBoardDisplay, clearForm, bindEvents, getFormData};
+})()
+
+const main = (function() {
+  displayController.bindEvents();
+})()
+
+function submit() {
+  let isValid;
+  let data = displayController.getFormData();
+
+  //Validate data
+  if (
+    data["name1"] &&
+    (data["X/O"] === "x" || data["X/O"] === "o") &&
+    data["name2"] &&
+    data["type"]
+  )
+    isValid = true;
+
+  // Initiallize players
+  if (isValid) {
+    player1 = new Player(data["name1"], data["X/O"], 1);
+    player2 = new Player(
+      data["name2"],
+      data["X/O"] === "x" ? "o" : "x",
+      2,
+      data["type"] === "computer" ? true : false
+    );
+    pubSub.publish('playersFormSubmitted', undefined);
+  } else {
+    alert("Fill in the fields correctly!");
+  }
+}
