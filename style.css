@@ -91,15 +91,22 @@ body {
 /* End game-start */
 /* game-main */
 #game-main.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#game-container {
     margin-top: 5em;
     padding: 16px;
-    height: 50%;
+    height: 250px;
+    width: 250px;
     display: grid;
     gap: 8px;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 }
 #game-main.active span {
     text-align: center;
+    border: 1px solid black;
 }
 /* End game-main */
 /* game-over */
