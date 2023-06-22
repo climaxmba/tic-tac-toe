@@ -93,11 +93,14 @@ body {
 #game-main.active {
     display: flex;
     flex-direction: column;
+    gap: 2.5rem;
     align-items: center;
+}
+#round-status {
+    font-size: 1.2rem;
 }
 #game-container {
     background-color: black;
-    margin-top: 5em;
     height: 250px;
     width: 250px;
     display: grid;
