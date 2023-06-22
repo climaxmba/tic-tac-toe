@@ -18,6 +18,7 @@ const GameBoard = (function() {
     const getBoard = () => gameBoard;
     const setBoard = (index, value) => {
         gameBoard[index] = value;
+        pubSub.publish('gameBoardChanged');
     };
     return {setBoard, getBoard};
 })()
@@ -47,9 +48,11 @@ const displayController = (function() {
       pages = [gameStart, gameMain, gameOver],
       submitBtn = document.getElementById("submit-btn"),
       inputs = gameStart.querySelectorAll("input"),
-      boardDisplay = gameMain.querySelectorAll("span");
+      boardDisplay = gameMain.querySelectorAll("span"),
+      cells = gameMain.querySelectorAll('span');
 
     pubSub.subscribe("playersFormSubmitted", changeToGameMain);
+    pubSub.subscribe('gameBoardChanged', refreshBoardDisplay);
 
     function clearForm() {
         inputs.forEach(elem => {
@@ -62,6 +65,7 @@ const displayController = (function() {
     }
     function bindEvents() {
         submitBtn.onclick = submit;
+        cells.forEach(cell => cell.onclick = playRound);
     }
     function getFormData() {
         return Object.fromEntries(new FormData(gameStart.querySelector('form')));
@@ -80,6 +84,13 @@ const displayController = (function() {
             }
         })
         gameMain.classList.add('active');
+    }
+    function refreshBoardDisplay() {
+        const data = GameBoard.getBoard();
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].textContent = data[i];
+            cells[i].setAttribute('data-value', data[i]);
+        }
     }
     return {updateBoardDisplay, clearForm, bindEvents, getFormData};
 })()
@@ -110,8 +121,14 @@ function submit() {
       2,
       data["type"] === "computer" ? true : false
     );
-    pubSub.publish('playersFormSubmitted', undefined);
+    pubSub.publish('playersFormSubmitted');
   } else {
     alert("Fill in the fields correctly!");
+  }
+}
+function playRound(e) {
+  if (!e.target.getAttribute("data-value")) {
+    const index = e.target.getAttribute("data-cell");
+    GameBoard.setBoard(index, "x");
   }
 }
