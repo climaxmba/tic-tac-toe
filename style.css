@@ -31,6 +31,7 @@ body {
     color: var(--mainbgcolor);
     background-color: var(--maincolor);
     border: 1px solid var(--mainbgcolor);
+    padding: 6px;
 }
 #nav-bar button:active {
     color: var(--maincolor);
@@ -103,14 +104,15 @@ body {
 #game-over.active button {
     padding: var(--btnpad);
     justify-self: center;
-    background-color: transparent;
-    border: 2px solid var(--maincolor);
-}
-#submit-btn:active,
-#game-over.active button:active {
     background-color: var(--maincolor);
     color: var(--mainbgcolor);
     border: 2px solid var(--mainbgcolor);
+}
+#submit-btn:active,
+#game-over.active button:active {
+    background-color: transparent;
+    color: var(--maincolor);
+    border: 2px solid var(--maincolor);
 }
 /* End game-start */
 /* game-main */
