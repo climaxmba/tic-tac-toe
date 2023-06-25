@@ -2,7 +2,7 @@
 
 :root {
     --mainbgcolor: white;
-    --maincolor: black;
+    --maincolor: #242424;
     --btnpad: 8px 18px;
 }
 * {
@@ -11,6 +11,8 @@
 }
 
 body {
+    color: var(--maincolor);
+    background-color: var(--mainbgcolor);
     margin: 0;
     display: grid;
     grid-template-rows: auto minmax(500px, 130vh) auto;
@@ -85,6 +87,7 @@ body {
 #game-start.active > form input[type="text"] {
     border: none;
     background-color: transparent;
+    color: var(--maincolor);
     border-bottom: 1px solid var(--maincolor);
     padding: 8px;
     letter-spacing: 2px;
@@ -126,7 +129,7 @@ body {
     font-size: 1.2rem;
 }
 #game-container {
-    background-color: black;
+    background-color: var(--maincolor);
     height: 250px;
     width: 250px;
     display: grid;
@@ -134,7 +137,8 @@ body {
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 }
 #game-main.active span {
-    background-color: white;
+    background-color: var(--mainbgcolor);
+    color: var(--maincolor);
     text-align: center;
     font-size: 56px;
 }
@@ -170,5 +174,13 @@ footer a {
 }
 footer svg {
     height: 26px;
+    fill: var(--maincolor);
 }
 /* End footer */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --mainbgcolor: #242424;
+        --maincolor: white;
+    }
+}
