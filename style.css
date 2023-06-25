@@ -26,6 +26,14 @@ body {
 }
 #nav-bar button {
     margin-right: 16px;
+    color: var(--mainbgcolor);
+    background-color: var(--maincolor);
+    border: 1px solid var(--mainbgcolor);
+}
+#nav-bar button:active {
+    color: var(--maincolor);
+    background-color: var(--mainbgcolor);
+    border: 1px solid var(--maincolor);
 }
 /* End nav-bar */
 
@@ -89,13 +97,15 @@ body {
     justify-content: start;
     align-items: center;
 }
-#submit-btn {
+#submit-btn,
+#game-over.active button {
     padding: var(--btnpad);
     justify-self: center;
     background-color: transparent;
     border: 2px solid var(--maincolor);
 }
-#submit-btn:active {
+#submit-btn:active,
+#game-over.active button:active {
     background-color: var(--maincolor);
     color: var(--mainbgcolor);
     border: 2px solid var(--mainbgcolor);
@@ -135,16 +145,12 @@ body {
     text-align: center;
     font-size: 1.25rem;
 }
-#game-over.active button {
-    padding: 8px;
-}
 /* End game-over */
 /* End main */
 
 /* footer */
 footer {
     text-align: center;
-    background-color: #00000010;
     padding: 20px;
 }
 /* End footer */
