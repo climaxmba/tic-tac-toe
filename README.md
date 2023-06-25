@@ -9,7 +9,7 @@ Tic Tac Toe is a [game](https://en.wikipedia.org/wiki/Tic-tac-toe) for two playe
 
 ## 🚀 Usage
 
-- Click [here](climaxmba.github.io/tic-tac-toe/) to open it in your browser
+- Click [here](climaxmba.github.io/tic-tac-toe) to open it in your browser
 - Enter your names, select 'x' or 'o' and 'Start' (Computer player is still in development).
 
 ## 🐛 Found a bug?
