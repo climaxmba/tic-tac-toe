@@ -1,11 +1,11 @@
 :root {
-    --light: white;
-    --dark: black;
+    --mainbgcolor: white;
+    --maincolor: black;
+    --btnpad: 8px 18px;
 }
 * {
     box-sizing: border-box;
-    background-color: var(--light);
-    color: var(--dark);
+    font-family: 'Courier New', Courier, monospace;
 }
 
 body {
@@ -40,7 +40,7 @@ body {
 /* game-start */
 #game-start.active {
     display: grid;
-    gap: 8px 16px;
+    gap: 16px;
     grid-template-rows: auto auto auto;
 }
 #game-start.active > p {
@@ -56,7 +56,7 @@ body {
 }
 #game-start.active > form > div {
     padding: 16px;
-    border: 1px solid black;
+    border: 2px solid var(--maincolor);
     display: grid;
     gap: 12px 8px;
     grid-template-rows: repeat(5, auto);
@@ -73,13 +73,13 @@ body {
 }
 #game-start.active > form input[type="text"] {
     border: none;
+    background-color: transparent;
     border-bottom: 1px solid black;
     padding: 8px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 #game-start.active > form input[type="text"]:active,
 #game-start.active > form input[type="text"]:focus {
-    background-color: #00000010;
     outline: none;
 }
 #game-start.active .optns {
@@ -90,8 +90,15 @@ body {
     align-items: center;
 }
 #submit-btn {
-    padding: 6px 18px;
+    padding: var(--btnpad);
     justify-self: center;
+    background-color: transparent;
+    border: 2px solid var(--maincolor);
+}
+#submit-btn:active {
+    background-color: var(--maincolor);
+    color: var(--mainbgcolor);
+    border: 2px solid var(--mainbgcolor);
 }
 /* End game-start */
 /* game-main */
