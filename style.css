@@ -136,7 +136,7 @@ body {
 #game-main.active span {
     background-color: white;
     text-align: center;
-    font-size: 50px;
+    font-size: 56px;
 }
 /* End game-main */
 /* game-over */
@@ -154,7 +154,21 @@ body {
 
 /* footer */
 footer {
-    text-align: center;
     padding: 20px;
+    background-color: transparent;
+}
+footer,
+footer a {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+footer a {
+    text-decoration: none;
+    color: inherit;
+}
+footer svg {
+    height: 26px;
 }
 /* End footer */
