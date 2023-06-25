@@ -1,5 +1,11 @@
+:root {
+    --light: white;
+    --dark: black;
+}
 * {
     box-sizing: border-box;
+    background-color: var(--light);
+    color: var(--dark);
 }
 
 body {
@@ -10,7 +16,6 @@ body {
 
 /* nav-bar */
 #nav-bar {
-    background-color: #00000010;
     display: flex;
     align-items: center;
     justify-content: space-between;
