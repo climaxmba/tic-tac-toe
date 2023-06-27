@@ -54,35 +54,31 @@ const turnsControl = (function () {
       const char = totalTurnsPlayed % 2 === 0 ? "x" : "o";
       pubSub.publish("roundPlayed", { char, index });
       totalTurnsPlayed++;
-      checkStatus();
+      if (checkStatus('x')) {
+        pubSub.publish("gameOver", "x");
+      } else if (checkStatus('o')) {
+        pubSub.publish("gameOver", "o");
+      }
+      if (totalTurnsPlayed === 9) {
+        pubSub.publish("gameOver", "tie");
+      }
     }
   }
-  function checkStatus() {
+  function checkStatus(mark) {
     const board = GameBoard.getBoard();
     if (
-      (board[0] === board[1] && board[1] === board[2] && board[0] === "x") ||
-      (board[3] === board[4] && board[4] === board[5] && board[3] === "x") ||
-      (board[6] === board[7] && board[7] === board[8] && board[6] === "x") ||
-      (board[0] === board[3] && board[3] === board[6] && board[0] === "x") ||
-      (board[1] === board[4] && board[4] === board[7] && board[1] === "x") ||
-      (board[2] === board[5] && board[5] === board[8] && board[2] === "x") ||
-      (board[0] === board[4] && board[4] === board[8] && board[0] === "x") ||
-      (board[2] === board[4] && board[4] === board[6] && board[2] === "x")
+      (board[0] === board[1] && board[1] === board[2] && board[0] === mark) ||
+      (board[3] === board[4] && board[4] === board[5] && board[3] === mark) ||
+      (board[6] === board[7] && board[7] === board[8] && board[6] === mark) ||
+      (board[0] === board[3] && board[3] === board[6] && board[0] === mark) ||
+      (board[1] === board[4] && board[4] === board[7] && board[1] === mark) ||
+      (board[2] === board[5] && board[5] === board[8] && board[2] === mark) ||
+      (board[0] === board[4] && board[4] === board[8] && board[0] === mark) ||
+      (board[2] === board[4] && board[4] === board[6] && board[2] === mark)
     ) {
-      pubSub.publish("gameOver", "x");
-    } else if (
-      (board[0] === board[1] && board[1] === board[2] && board[0] === "o") ||
-      (board[3] === board[4] && board[4] === board[5] && board[3] === "o") ||
-      (board[6] === board[7] && board[7] === board[8] && board[6] === "o") ||
-      (board[0] === board[3] && board[3] === board[6] && board[0] === "o") ||
-      (board[1] === board[4] && board[4] === board[7] && board[1] === "o") ||
-      (board[2] === board[5] && board[5] === board[8] && board[2] === "o") ||
-      (board[0] === board[4] && board[4] === board[8] && board[0] === "o") ||
-      (board[2] === board[4] && board[4] === board[6] && board[2] === "o")
-    ) {
-      pubSub.publish("gameOver", "o");
-    } else if (totalTurnsPlayed === 9) {
-      pubSub.publish("gameOver", "tie");
+      return true;
+    } else {
+      return false;
     }
   }
 
