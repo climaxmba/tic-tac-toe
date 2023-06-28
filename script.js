@@ -39,10 +39,31 @@ const GameBoard = (function () {
   function resetBoard() {
     gameBoard = ["", "", "", "", "", "", "", "", ""];
   }
+  function getEmptyCells(board) {
+    return board.filter((e, i) => {
+      if (!e) return i;
+    });
+  }
+  function checkStatus(mark) {
+    if (
+      (gameBoard[0] === gameBoard[1] && gameBoard[1] === gameBoard[2] && gameBoard[0] === mark) ||
+      (gameBoard[3] === gameBoard[4] && gameBoard[4] === gameBoard[5] && gameBoard[3] === mark) ||
+      (gameBoard[6] === gameBoard[7] && gameBoard[7] === gameBoard[8] && gameBoard[6] === mark) ||
+      (gameBoard[0] === gameBoard[3] && gameBoard[3] === gameBoard[6] && gameBoard[0] === mark) ||
+      (gameBoard[1] === gameBoard[4] && gameBoard[4] === gameBoard[7] && gameBoard[1] === mark) ||
+      (gameBoard[2] === gameBoard[5] && gameBoard[5] === gameBoard[8] && gameBoard[2] === mark) ||
+      (gameBoard[0] === gameBoard[4] && gameBoard[4] === gameBoard[8] && gameBoard[0] === mark) ||
+      (gameBoard[2] === gameBoard[4] && gameBoard[4] === gameBoard[6] && gameBoard[2] === mark)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   pubSub.subscribe("roundPlayed", setBoard);
   pubSub.subscribe("gameOver", resetBoard);
-  return { getBoard };
+  return { getBoard, checkStatus, getEmptyCells };
 })();
 
 const turnsControl = (function () {
@@ -54,9 +75,9 @@ const turnsControl = (function () {
       const char = totalTurnsPlayed % 2 === 0 ? "x" : "o";
       pubSub.publish("roundPlayed", { char, index });
       totalTurnsPlayed++;
-      if (checkStatus('x')) {
+      if (GameBoard.checkStatus('x')) {
         pubSub.publish("gameOver", "x");
-      } else if (checkStatus('o')) {
+      } else if (GameBoard.checkStatus('o')) {
         pubSub.publish("gameOver", "o");
       }
       if (totalTurnsPlayed === 9) {
@@ -64,24 +85,6 @@ const turnsControl = (function () {
       }
     }
   }
-  function checkStatus(mark) {
-    const board = GameBoard.getBoard();
-    if (
-      (board[0] === board[1] && board[1] === board[2] && board[0] === mark) ||
-      (board[3] === board[4] && board[4] === board[5] && board[3] === mark) ||
-      (board[6] === board[7] && board[7] === board[8] && board[6] === mark) ||
-      (board[0] === board[3] && board[3] === board[6] && board[0] === mark) ||
-      (board[1] === board[4] && board[4] === board[7] && board[1] === mark) ||
-      (board[2] === board[5] && board[5] === board[8] && board[2] === mark) ||
-      (board[0] === board[4] && board[4] === board[8] && board[0] === mark) ||
-      (board[2] === board[4] && board[4] === board[6] && board[2] === mark)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   return { playRound };
 })();
 
