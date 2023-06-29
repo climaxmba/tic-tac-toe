@@ -6,7 +6,7 @@ function Player(name, mark, isComputer) {
   this.isComputer = isComputer ? true : false;
   const getMark = () => this.mark;
   const getName = () => this.name;
-  return { getName, getMark, isComputer};
+  return { getName, getMark, isComputer };
 }
 
 const pubSub = (function () {
@@ -37,14 +37,13 @@ const GameBoard = (function () {
     pubSub.publish("gameBoardChanged");
   }
   function resetBoard() {
-    gameBoard = ["", "", "", "", "", "", "", "", ""];
+    gameBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   }
   function getEmptyCells(board) {
     const empltycells = [];
 
     for (let i = 0; i < board.length; i++) {
-      // minimax places a number during it's execution
-      if (!board[i] || typeof board[i] === 'number') empltycells.push(i);
+      if (!board[i] || typeof board[i] === "number") empltycells.push(i);
     }
 
     return empltycells;
@@ -67,9 +66,9 @@ const GameBoard = (function () {
     }
   }
   function checkGameOver(obj) {
-    if (checkStatus('x')) {
+    if (checkStatus("x")) {
       pubSub.publish("gameOver", "x");
-    } else if (checkStatus('o')) {
+    } else if (checkStatus("o")) {
       pubSub.publish("gameOver", "o");
     }
     if (obj.totalTurnsPlayed === 9) {
@@ -84,6 +83,7 @@ const GameBoard = (function () {
 })();
 
 const turnsControl = (function () {
+  pubSub.subscribe("computerPlayed", playComputerRound);
   let totalTurnsPlayed = 0;
 
   function playRound(e) {
@@ -93,6 +93,12 @@ const turnsControl = (function () {
       totalTurnsPlayed++;
       pubSub.publish("roundPlayed", { mark, index, totalTurnsPlayed });
     }
+  }
+  function playComputerRound(obj) {
+    const index = obj.index;
+    const mark = obj.mark;
+    totalTurnsPlayed++;
+    pubSub.publish("roundPlayed", { mark, index, totalTurnsPlayed });
   }
   return { playRound };
 })();
@@ -160,8 +166,10 @@ const displayController = (function () {
   function refreshBoardDisplay() {
     const data = GameBoard.getBoard();
     for (let i = 0; i < cells.length; i++) {
-      cells[i].textContent = data[i];
-      cells[i].setAttribute("data-value", data[i]);
+      if (typeof data[i] !== "number") {
+        cells[i].textContent = data[i];
+        cells[i].setAttribute("data-value", data[i]);
+      }
     }
   }
   function updateTurnStatus(obj) {
@@ -229,11 +237,11 @@ function minimax(currBoard, currMark) {
 
   // Check for terminal states
   if (GameBoard.checkStatus(humanMark, currBoard)) {
-    return {score: -1};
+    return { score: -1 };
   } else if (GameBoard.checkStatus(computerMark, currBoard)) {
-    return {score: 1};
+    return { score: 1 };
   } else if (!availableAreas.length) {
-    return {score: 0};
+    return { score: 0 };
   }
 
   const allTestPlaysInfos = [];
@@ -249,7 +257,6 @@ function minimax(currBoard, currMark) {
     }
 
     currBoard[availableAreas[i]] = currTestInfo.index;
-    console.log(currTestInfo);
     allTestPlaysInfos.push(currTestInfo);
   }
 
@@ -274,3 +281,32 @@ function minimax(currBoard, currMark) {
 
   return allTestPlaysInfos[bestTestPlay];
 }
+
+const computerPlayer = (function () {
+  pubSub.subscribe("playersFormSubmitted", setSelf);
+  pubSub.subscribe("roundPlayed", checkTurn);
+  pubSub.subscribe("gameOver", end);
+  let mark, isComputer;
+
+  function setSelf() {
+    mark = players[1].getMark();
+    isComputer = players[1].isComputer;
+    if (mark === "x" && isComputer) play();
+    if (!isComputer) end();
+  }
+  function checkTurn(obj) {
+    if (
+      (obj.totalTurnsPlayed % 2 === 0 && mark === "x") ||
+      (obj.totalTurnsPlayed % 2 !== 0 && mark === "o")
+    ) {
+      play();
+    }
+  }
+  function end() {
+    pubSub.unSubscribe("roundPlayed", checkTurn);
+  }
+  function play() {
+    const index = minimax(GameBoard.getBoard(), mark).index;
+    pubSub.publish("computerPlayed", { mark, index });
+  }
+})();
