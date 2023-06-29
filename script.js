@@ -1,12 +1,12 @@
 const players = [];
 
-function Player(name, char, isComputer) {
+function Player(name, mark, isComputer) {
   this.name = name;
-  this.char = char;
+  this.mark = mark;
   this.isComputer = isComputer ? true : false;
-  const getChar = () => this.char;
+  const getMark = () => this.mark;
   const getName = () => this.name;
-  return { getName, getChar };
+  return { getName, getMark, isComputer};
 }
 
 const pubSub = (function () {
@@ -33,35 +33,52 @@ const GameBoard = (function () {
 
   const getBoard = () => gameBoard;
   function setBoard(obj) {
-    gameBoard[obj.index] = obj.char;
+    gameBoard[obj.index] = obj.mark;
     pubSub.publish("gameBoardChanged");
   }
   function resetBoard() {
     gameBoard = ["", "", "", "", "", "", "", "", ""];
   }
   function getEmptyCells(board) {
-    return board.filter((e, i) => {
-      if (!e) return i;
-    });
+    const empltycells = [];
+
+    for (let i = 0; i < board.length; i++) {
+      // minimax places a number during it's execution
+      if (!board[i] || typeof board[i] === 'number') empltycells.push(i);
+    }
+
+    return empltycells;
   }
-  function checkStatus(mark) {
+  function checkStatus(mark, board) {
+    if (board === undefined) board = getBoard();
     if (
-      (gameBoard[0] === gameBoard[1] && gameBoard[1] === gameBoard[2] && gameBoard[0] === mark) ||
-      (gameBoard[3] === gameBoard[4] && gameBoard[4] === gameBoard[5] && gameBoard[3] === mark) ||
-      (gameBoard[6] === gameBoard[7] && gameBoard[7] === gameBoard[8] && gameBoard[6] === mark) ||
-      (gameBoard[0] === gameBoard[3] && gameBoard[3] === gameBoard[6] && gameBoard[0] === mark) ||
-      (gameBoard[1] === gameBoard[4] && gameBoard[4] === gameBoard[7] && gameBoard[1] === mark) ||
-      (gameBoard[2] === gameBoard[5] && gameBoard[5] === gameBoard[8] && gameBoard[2] === mark) ||
-      (gameBoard[0] === gameBoard[4] && gameBoard[4] === gameBoard[8] && gameBoard[0] === mark) ||
-      (gameBoard[2] === gameBoard[4] && gameBoard[4] === gameBoard[6] && gameBoard[2] === mark)
+      (board[0] === board[1] && board[1] === board[2] && board[0] === mark) ||
+      (board[3] === board[4] && board[4] === board[5] && board[3] === mark) ||
+      (board[6] === board[7] && board[7] === board[8] && board[6] === mark) ||
+      (board[0] === board[3] && board[3] === board[6] && board[0] === mark) ||
+      (board[1] === board[4] && board[4] === board[7] && board[1] === mark) ||
+      (board[2] === board[5] && board[5] === board[8] && board[2] === mark) ||
+      (board[0] === board[4] && board[4] === board[8] && board[0] === mark) ||
+      (board[2] === board[4] && board[4] === board[6] && board[2] === mark)
     ) {
       return true;
     } else {
       return false;
     }
   }
+  function checkGameOver(obj) {
+    if (checkStatus('x')) {
+      pubSub.publish("gameOver", "x");
+    } else if (checkStatus('o')) {
+      pubSub.publish("gameOver", "o");
+    }
+    if (obj.totalTurnsPlayed === 9) {
+      pubSub.publish("gameOver", "tie");
+    }
+  }
 
   pubSub.subscribe("roundPlayed", setBoard);
+  pubSub.subscribe("roundPlayed", checkGameOver);
   pubSub.subscribe("gameOver", resetBoard);
   return { getBoard, checkStatus, getEmptyCells };
 })();
@@ -72,17 +89,9 @@ const turnsControl = (function () {
   function playRound(e) {
     if (!e.target.getAttribute("data-value")) {
       const index = e.target.getAttribute("data-cell");
-      const char = totalTurnsPlayed % 2 === 0 ? "x" : "o";
-      pubSub.publish("roundPlayed", { char, index });
+      const mark = totalTurnsPlayed % 2 === 0 ? "x" : "o";
       totalTurnsPlayed++;
-      if (GameBoard.checkStatus('x')) {
-        pubSub.publish("gameOver", "x");
-      } else if (GameBoard.checkStatus('o')) {
-        pubSub.publish("gameOver", "o");
-      }
-      if (totalTurnsPlayed === 9) {
-        pubSub.publish("gameOver", "tie");
-      }
+      pubSub.publish("roundPlayed", { mark, index, totalTurnsPlayed });
     }
   }
   return { playRound };
@@ -157,15 +166,15 @@ const displayController = (function () {
   }
   function updateTurnStatus(obj) {
     if (obj === undefined) {
-      obj = { char: "x" };
+      obj = { mark: "x" };
       roundSatus.textContent = `${
-        players[0].getChar() === obj.char
+        players[0].getMark() === obj.mark
           ? players[0].getName()
           : players[1].getName()
       }'s turn`;
     } else {
       roundSatus.textContent = `${
-        players[0].getChar() === obj.char
+        players[0].getMark() === obj.mark
           ? players[1].getName()
           : players[0].getName()
       }'s turn`;
@@ -174,7 +183,7 @@ const displayController = (function () {
   function displayStatus(str) {
     if (str !== "tie") {
       statusMessage.textContent = `${
-        players[0].getChar() === str
+        players[0].getMark() === str
           ? players[0].getName()
           : players[1].getName()
       } won!`;
@@ -210,4 +219,58 @@ function submit() {
   } else {
     alert("Fill in the fields correctly!");
   }
+}
+
+// minimax algorithm modified for compatibiliy
+function minimax(currBoard, currMark) {
+  const availableAreas = GameBoard.getEmptyCells(currBoard),
+    computerMark = players[1].getMark(),
+    humanMark = players[0].getMark();
+
+  // Check for terminal states
+  if (GameBoard.checkStatus(humanMark, currBoard)) {
+    return {score: -1};
+  } else if (GameBoard.checkStatus(computerMark, currBoard)) {
+    return {score: 1};
+  } else if (!availableAreas.length) {
+    return {score: 0};
+  }
+
+  const allTestPlaysInfos = [];
+  for (let i = 0; i < availableAreas.length; i++) {
+    const currTestInfo = {};
+    currTestInfo.index = availableAreas[i];
+    currBoard[availableAreas[i]] = currMark;
+
+    if (currMark === computerMark) {
+      currTestInfo.score = minimax(currBoard, humanMark).score;
+    } else {
+      currTestInfo.score = minimax(currBoard, computerMark).score;
+    }
+
+    currBoard[availableAreas[i]] = currTestInfo.index;
+    console.log(currTestInfo);
+    allTestPlaysInfos.push(currTestInfo);
+  }
+
+  let bestTestPlay = null;
+  if (currMark === computerMark) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < allTestPlaysInfos.length; i++) {
+      if (allTestPlaysInfos[i].score > bestScore) {
+        bestScore = allTestPlaysInfos[i].score;
+        bestTestPlay = i;
+      }
+    }
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < allTestPlaysInfos.length; i++) {
+      if (allTestPlaysInfos[i].score < bestScore) {
+        bestScore = allTestPlaysInfos[i].score;
+        bestTestPlay = i;
+      }
+    }
+  }
+
+  return allTestPlaysInfos[bestTestPlay];
 }
